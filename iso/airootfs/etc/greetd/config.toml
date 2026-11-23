@@ -1,0 +1,10 @@
+[terminal]
+vt = 1
+
+[default_session]
+command = "tuigreet --time --remember --asterisks --greeting 'Welcome to Cx OS' --cmd 'uwsm start -- hyprland.desktop'"
+user = "greeter"
+
+[initial_session]
+command = "uwsm start -- hyprland.desktop"
+user = "cxos"

@@ -1,0 +1,10 @@
+NAME="Cx OS"
+PRETTY_NAME="Cx OS"
+ID=cxos
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;79;140;255"
+HOME_URL="https://github.com/caiquexYT/Cx-OS"
+SUPPORT_URL="https://github.com/caiquexYT/Cx-OS/issues"
+BUG_REPORT_URL="https://github.com/caiquexYT/Cx-OS/issues"
+LOGO=cxos

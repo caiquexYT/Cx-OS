@@ -27,6 +27,8 @@ hl.on("hyprland.start", function()
 
     -- Start shell
     hl.exec_cmd("cxos shell -d")
+    -- First login: apply the Cx OS wallpaper and colour scheme
+    hl.exec_cmd("sh -c 'm=${XDG_STATE_HOME:-$HOME/.local/state}/cxos/.firstrun; [ -e \"$m\" ] || { sleep 2; cxos wallpaper -f /usr/share/backgrounds/cxos/cxos-default.png && mkdir -p \"${m%/*}\" && touch \"$m\"; }'")
 end)
 
 -- Resizer listeners

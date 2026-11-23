@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+useradd -m -U -G wheel,video,input,audio,network -s /usr/bin/fish -c "Cx OS Live" cxos
+passwd -d cxos
+passwd -l root
+install -d -o cxos -g cxos /home/cxos/.config /home/cxos/.local/state/cxos /home/cxos/Pictures/Wallpapers
+cp -rT /etc/xdg/cxos/skel /home/cxos/.config
+cp -n /usr/share/backgrounds/cxos/* /home/cxos/Pictures/Wallpapers/ 2>/dev/null || true
+chown -R cxos:cxos /home/cxos

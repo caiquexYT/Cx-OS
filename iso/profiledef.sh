@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034
 
-iso_name="archlinux"
-iso_label="ARCH_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
-iso_publisher="Arch Linux <https://archlinux.org>"
-iso_application="Arch Linux Live/Rescue DVD"
+iso_name="cxos"
+iso_label="CXOS_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
+iso_publisher="Cx OS <https://github.com/caiquexYT/Cx-OS>"
+iso_application="Cx OS Live/Install"
 iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
-install_dir="arch"
+install_dir="cxos"
 bootmodes=('bios.syslinux'
            'uefi.systemd-boot')
 pacman_conf="pacman.conf"
@@ -22,4 +22,12 @@ file_permissions=(
   ["/usr/local/bin/choose-mirror"]="0:0:755"
   ["/usr/local/bin/Installation_guide"]="0:0:755"
   ["/usr/local/bin/livecd-sound"]="0:0:755"
+  ["/usr/local/bin/cxos-clean"]="0:0:755"
+  ["/usr/local/bin/cxos-update"]="0:0:755"
+  ["/usr/local/bin/cxos-install"]="0:0:755"
+  ["/usr/local/bin/cxos-live-user"]="0:0:755"
+  ["/usr/local/bin/cxos-postinstall"]="0:0:755"
+  ["/etc/sudoers.d"]="0:0:750"
+  ["/etc/sudoers.d/10-cxos"]="0:0:440"
+  ["/etc/sudoers.d/90-cxos-live"]="0:0:440"
 )

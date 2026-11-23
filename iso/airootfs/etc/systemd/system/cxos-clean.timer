@@ -1,0 +1,8 @@
+[Unit]
+Description=Cx OS weekly system cleanup
+[Timer]
+OnCalendar=weekly
+Persistent=true
+RandomizedDelaySec=1h
+[Install]
+WantedBy=timers.target

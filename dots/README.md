@@ -1,6 +1,6 @@
 # cxos
 
-This is the main repo of the CxOS dotfiles and contains user configs for
+This is the main repo of the Cx OS dotfiles and contains user configs for
 various apps.
 
 > [!IMPORTANT]
@@ -100,7 +100,7 @@ You can read more about configuring Hyprland on their [wiki](https://wiki.hypr.l
 
 ### Additional configuration
 
-CxOS is a multifaceted ecosystem comprising the dotfiles (this repo), the [shell][shell-repo], and the [CLI][cli-repo].
+Cx OS is a multifaceted ecosystem comprising the dotfiles (this repo), the [shell][shell-repo], and the [CLI][cli-repo].
 The shell’s configuration is managed by `~/.config/cxos/shell.json`, which modifies the shell’s behavior.
 The CLI config file (`~/.config/cxos/cli.json`) lets you adjust the CLI’s theming and handling of special workspaces.
 You can find more information on configuring the shell and the CLI in their respective repos.

@@ -1,0 +1,9 @@
+[Unit]
+Description=Create the Cx OS live user
+Before=greetd.service systemd-user-sessions.service
+ConditionPathExists=!/home/cxos
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/cxos-live-user
+[Install]
+WantedBy=multi-user.target

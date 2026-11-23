@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# cxos-clean: safe deep cleanup for Cx OS. Never touches documents, configs or app data.
+#   cxos-clean          clean the current user (+ system parts when run with sudo)
+#   cxos-clean --auto   quiet mode used by the systemd timers
+#   cxos-clean --dry    show what would be freed
+set -uo pipefail
+AUTO=0 DRY=0
+for a in "$@"; do
+    case $a in
+        --auto) AUTO=1 ;;
+        --dry) DRY=1 ;;
+        -h|--help) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    esac
+done
+say() { [[ $AUTO == 1 ]] || printf '\e[38;2;79;140;255m::\e[0m %s\n' "$*"; }
+size() { du -sb "$@" 2>/dev/null | awk '{s+=$1} END {print s+0}'; }
+human() { numfmt --to=iec --suffix=B "${1:-0}" 2>/dev/null || echo "${1}B"; }
+run() { [[ $DRY == 1 ]] && { say "would run: $*"; return; }; "$@" >/dev/null 2>&1 || true; }
+del_old() { # dir days
+    [[ -d $1 ]] || return 0
+    if [[ $DRY == 1 ]]; then find "$1" -xdev -type f -atime +"$2" -printf '%s\n' 2>/dev/null | awk '{s+=$1} END {printf "  %s: %d bytes old files\n", "'"$1"'", s}'
+    else find "$1" -xdev -mindepth 1 -type f -atime +"$2" -delete 2>/dev/null; find "$1" -xdev -mindepth 1 -type d -empty -delete 2>/dev/null; fi
+}
+freed=0
+clean_user() {
+    local h=$1 before
+    before=$(size "$h/.cache" "$h/.local/share/Trash")
+    say "User files: $h"
+    del_old "$h/.cache/thumbnails" 30
+    del_old "$h/.cache" 60
+    del_old "$h/.local/share/Trash/files" 30; del_old "$h/.local/share/Trash/info" 30
+    for b in mozilla/firefox chromium google-chrome BraveSoftware; do del_old "$h/.cache/$b" 14; done
+    [[ -f $h/.local/share/recently-used.xbel ]] && run truncate -s 0 "$h/.local/share/recently-used.xbel"
+    command -v flatpak >/dev/null && run flatpak uninstall --user --unused -y
+    freed=$((freed + before - $(size "$h/.cache" "$h/.local/share/Trash")))
+}
+clean_system() {
+    local before
+    before=$(size /var/cache/pacman/pkg /var/log /var/lib/systemd/coredump /var/tmp)
+    say "System: package cache, logs, crash dumps, orphans"
+    command -v paccache >/dev/null && { run paccache -rk2; run paccache -ruk0; }
+    run journalctl --vacuum-size=200M --vacuum-time=2weeks
+    run find /var/lib/systemd/coredump -type f -delete
+    del_old /var/tmp 10
+    [[ $DRY == 1 ]] || find /var/log -xdev -type f \( -name '*.old' -o -name '*.[0-9]' -o -name '*.gz' \) -mtime +14 -delete 2>/dev/null || true
+    command -v flatpak >/dev/null && run flatpak uninstall --system --unused -y
+    if [[ $AUTO == 0 ]]; then
+        mapfile -t orphans < <(pacman -Qdtq 2>/dev/null)
+        if ((${#orphans[@]})); then
+            say "Unused packages: ${orphans[*]}"
+            [[ $DRY == 1 ]] || pacman -Rns --noconfirm "${orphans[@]}" >/dev/null 2>&1 || true
+        fi
+    fi
+    run fstrim -A
+    freed=$((freed + before - $(size /var/cache/pacman/pkg /var/log /var/lib/systemd/coredump /var/tmp)))
+}
+if [[ $EUID == 0 ]]; then
+    clean_system
+    [[ -n ${SUDO_USER:-} ]] && clean_user "$(getent passwd "$SUDO_USER" | cut -d: -f6)"
+else
+    clean_user "$HOME"
+    [[ $AUTO == 0 ]] && say "Tip: run 'sudo cxos-clean' to also clean system caches and logs"
+fi
+((freed < 0)) && freed=0
+say "Done. Freed $(human $freed)."

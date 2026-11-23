@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# cxos-update: update the whole system (packages, Flatpak apps, firmware) then clean up
+set -uo pipefail
+say() { printf '\e[38;2;79;140;255m::\e[0m %s\n' "$*"; }
+say "Updating system packages"
+sudo pacman -Syu || exit 1
+command -v flatpak >/dev/null && { say "Updating Flatpak apps"; flatpak update -y; }
+command -v fwupdmgr >/dev/null && { say "Checking firmware"; fwupdmgr refresh >/dev/null 2>&1; fwupdmgr get-updates 2>/dev/null | grep -q Upgrade && fwupdmgr update; }
+[[ -n $(pacman -Qdtq 2>/dev/null) ]] && say "Unused packages present: run 'sudo cxos-clean' to remove them"
+sudo cxos-clean
+say "System is up to date."
