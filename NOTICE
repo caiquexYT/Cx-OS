@@ -1,0 +1,14 @@
+Cx OS
+=====
+
+Cx OS is free software licensed under the GNU General Public License v3.0 (see LICENSE).
+
+The desktop shell (shell/), the control utility (cli/) and the base dotfiles (dots/)
+are modified forks of the Caelestia project by the Caelestia contributors:
+
+  - https://github.com/caelestia-dots/shell
+  - https://github.com/caelestia-dots/cli
+  - https://github.com/caelestia-dots/caelestia
+
+All Caelestia code is GPL-3.0 and remains so in this fork. Modifications made for Cx OS
+(renaming, performance and memory fixes, Windows 11-style taskbar, tools, etc.) are also GPL-3.0.
