@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Runs inside the installed system (archinstall custom command)
+set -uo pipefail
+systemctl enable greetd NetworkManager nftables apparmor systemd-oomd power-profiles-daemon bluetooth fstrim.timer cxos-clean.timer
+systemctl set-default graphical.target
+sed -i '/^\[initial_session\]/,$d' /etc/greetd/config.toml
+rm -f /etc/sudoers.d/90-cxos-live
+for h in /home/*; do
+    u=${h##*/}; id "$u" >/dev/null 2>&1 || continue
+    install -d -o "$u" -g "$u" "$h/.config"
+    cp -rnT /etc/xdg/cxos/skel "$h/.config"; chown -R "$u:$u" "$h/.config"
+    chsh -s /usr/bin/fish "$u"
+done
+for e in /boot/loader/entries/*.conf; do
+    grep -q 'lsm=' "$e" || sed -i '/^options/ s/$/ quiet loglevel=3 lsm=landlock,lockdown,yama,integrity,apparmor,bpf/' "$e"
+done
+passwd -l root

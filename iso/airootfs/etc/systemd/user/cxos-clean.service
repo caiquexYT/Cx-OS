@@ -1,0 +1,7 @@
+[Unit]
+Description=Cx OS weekly user cache cleanup
+[Service]
+Type=oneshot
+Nice=19
+IOSchedulingClass=idle
+ExecStart=/usr/local/bin/cxos-clean --auto

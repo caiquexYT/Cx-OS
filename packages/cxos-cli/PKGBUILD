@@ -1,0 +1,24 @@
+# Maintainer: Cx OS <https://github.com/caiquexYT/Cx-OS>
+pkgname=cxos-cli
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Cx OS control utility (fork of Caelestia CLI)'
+arch=('any')
+url='https://github.com/caiquexYT/Cx-OS'
+license=('GPL-3.0-only')
+depends=('python' 'python-pillow' 'python-materialyoucolor' 'libnotify' 'swappy' 'grim' 'slurp'
+         'wl-clipboard' 'cliphist' 'fuzzel' 'glib2' 'ffmpeg' 'hyprland')
+makedepends=('python-build' 'python-installer' 'python-hatchling' 'python-hatch-vcs')
+_src="$startdir/../../cli"
+
+build() {
+    rm -rf cli && cp -r "$_src" cli
+    cd cli
+    SETUPTOOLS_SCM_PRETEND_VERSION="$pkgver" python -m build --wheel --no-isolation
+}
+
+package() {
+    cd cli
+    python -m installer --destdir="$pkgdir" dist/*.whl
+    install -Dm644 completions/cxos.fish "$pkgdir/usr/share/fish/vendor_completions.d/cxos.fish"
+}

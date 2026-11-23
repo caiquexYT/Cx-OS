@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# cxos-install: install Cx OS to disk using archinstall, then apply the Cx OS desktop and hardening.
+set -euo pipefail
+[[ $EUID == 0 ]] || exec sudo "$0" "$@"
+PKGS=$(grep -v '^#' /etc/cxos/desktop-packages | tr '\n' ' ')
+cat > /tmp/cxos-archinstall.json <<J
+{
+  "bootloader": "Systemd-boot",
+  "kernels": ["linux"],
+  "hostname": "cxos",
+  "audio_config": {"audio": "pipewire"},
+  "network_config": {"type": "nm"},
+  "swap": true,
+  "ntp": true,
+  "packages": [$(printf '"%s",' $PKGS | sed 's/,$//')],
+  "custom_commands": ["/usr/local/bin/cxos-postinstall"]
+}
+J
+echo "Cx OS installer: answer the disk, user and language questions; everything else is preconfigured."
+cp /etc/pacman.conf /etc/pacman.conf.cxos-bak
+archinstall --config /tmp/cxos-archinstall.json
