@@ -195,7 +195,8 @@ StyledWindow {
                     sourceSize.width: 52
                     sourceSize.height: 52
                     asynchronous: true
-                    source: Icons.getAppIcon(appButton.modelData.id, "application-x-executable")
+                    // Re-evaluate once desktop entries finish loading
+                    source: DesktopEntries.applications.values.length >= 0 ? Icons.getAppIcon(appButton.modelData.id, "application-x-executable") : ""
                 }
 
                 Rectangle {
@@ -359,7 +360,7 @@ StyledWindow {
             visible: btn.icon.length > 0
             text: btn.icon
             color: Colours.palette.m3onSurface
-            font.pointSize: 16
+            fontStyle: Tokens.font.icon.large
         }
 
         StyledText {

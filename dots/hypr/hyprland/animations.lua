@@ -1,3 +1,5 @@
+local vars = require("variables")
+
 hl.config({
     animations = {
         enabled = vars.animationsEnabled,

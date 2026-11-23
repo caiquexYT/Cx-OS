@@ -137,7 +137,7 @@ class BarConfig : public settings::ObjectNode {
             LIST_ENTRY(statusIcons, true),
             LIST_ENTRY(power, true),
         }))
-    CONFIG_PROPERTY(QStringList, excludedScreens, { u".*"_s }) // Cx OS uses the bottom taskbar instead
+    CONFIG_PROPERTY(QStringList, excludedScreens, { u"^.*$"_s }) // Cx OS uses the bottom taskbar instead
 };
 
 } // namespace cxos::shell::config
